@@ -1,156 +1,168 @@
-const questions = [
+const quizData = [
     {
-        question: "What is the capital of France?",
-        options: ["Paris", "London", "Rome", "Berlin"],
-        answer: "Paris"
+        question: "What is the current president of Nigeria?",
+        options: ["Bola Ahmed Tinubu", "Muhammed Buhari", "Olusegun Obasanjo", "Yakubu Gowon"],
+        correctAnswer: "Bola Ahmed Tinubu"
     },
     {
-        question: "Which planet is known as the Red Planet?",
-        options: ["Earth", "Mars", "Jupiter", "Saturn"],
-        answer: "Mars"
+        question: "What is the capital of Lagos State?",
+        options: ["Lagos", "Abuja", "Ibadan", "Kano"],
+        correctAnswer: "Lagos"
     },
     {
-        question: "What is the largest ocean on Earth?",
-        options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
-        answer: "Pacific Ocean"
+        question: "Who is the President of Russia?",
+        options: ["Vladimir Putin", "Dmitry Medvedev", "Boris Yeltsin", "Mikhail Gorbachev"],
+        correctAnswer: "Vladimir Putin"
     },
     {
-      question: "Who wrote the play \"Romeo and Juliet\"?",
-      options: ["Charles Dickens", "J.K. Rowling", "William Shakespeare", "George Orwell"],
-      answer: "William Shakespeare"
-    },
-    {
-    question: "What is the largest planet in our solar system?",
-    options: ["Earth", "Jupiter", "Mars", "Venus"],
-    answer: "Jupiter"
-    },
-    {
-    question: "Which element has the chemical symbol 'O'?",
-    options: ["Gold", "Oxygen", "Hydrogen", "Carbon"],
-    answer: "Oxygen"
-    },
-    {
-    question: "Who is known as the \"Father of Computers\"?",
-    options: ["Albert Einstein", "Charles Babbage", "Isaac Newton", "Steve Jobs"],
-    answer: "Charles Babbage"
-    },
-    {
-    question: "In which year did World War II end?",
-    options: ["1941", "1945", "1939", "1950"],
-    answer: "1945"
-    },
-    {
-    question: "What is the hardest natural substance on Earth?",
-    options: ["Diamond", "Gold", "Iron", "Quartz"],
-    answer: "Diamond"
-    },
-    {
-    question: "What is the fastest land animal?",
-    options: ["Elephant", "Lion", "Cheetah", "Tiger"],
-    answer: "Cheetah"
-    },
-    {
-    question: "Which language is the most spoken worldwide?",
-    options: ["Spanish", "Hindi", "Mandarin Chinese", "English"],
-    answer: "Mandarin Chinese"
-    },
-  ];
-  
-  let currentQuestionIndex = 0;
-  let score = 0;
-  
-  const questionElement = document.getElementById('question');
-  const optionsElement = document.getElementById('options');
-  const nextButton = document.getElementById('next-button');
-  const resultContainer = document.getElementById('result-container');
-  const scoreElement = document.getElementById('score');
-  const restartButton = document.getElementById('restart-button');
-  const questionNumElement = document.getElementById('question-number');
-  
-//   Countdown TImer
-let timerDisplay = document.getElementById('timer');
-// Shuffle the questions only once
-let shuffledQuestions = [];
-let timeLeft = 30; // 30 seconds  
-
-function loadQuestion() {
-    const currentQuestion = shuffledQuestions[currentQuestionIndex];
-    questionElement.textContent = currentQuestion.question;
-    optionsElement.innerHTML = '';
-    questionNumberTracking();
-  
-    currentQuestion.options.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option;
-        button.addEventListener('click', () => checkAnswer(option));
-        optionsElement.appendChild(button);
-    });
-  }
-  
-  function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]]; // swap elements
+        question: "Who is the Capital of Germany?",
+        options: ["Berlin", "Munich", "Harmburg", "Frankfurt"],
+        correctAnswer: "Vladimir Putin"
     }
-    return arr;
-  }
-  
-  function checkAnswer(selectedOption) {
-    // stopped here
-    const correctAnswer = shuffledQuestions[currentQuestionIndex].answer;
-    if (selectedOption === correctAnswer) {
+];
+
+const questionContainer = document.getElementById("question-container");
+const timerElement = document.getElementById("timer");
+const nextButton = document.getElementById("next-button");
+const restartButton = document.getElementById("restart-button");
+const progressBar = document.querySelector(".progress-done");
+const resultContainer = document.getElementById("result-container");
+
+let currentQuestionIndex = 0;
+let score = 0;
+let countdown;
+
+const loadQuestion = () => {
+    const currentQuestion = quizData[currentQuestionIndex];
+    questionContainer.innerHTML = `
+        <p>${currentQuestion.question}</p>
+        <ul>
+            ${currentQuestion.options.map((option, index) => `
+                <li>
+                    <input type="radio" name="option" value="${option}" id="option${index}">
+                    <label for="option${index}">${option}</label>
+                </li>
+            `).join('')}
+        </ul>
+    `;
+    resetTimer();
+    startTimer();
+    
+};
+
+const checkAnswer = (selectedOption) => {
+    const currentQuestion = quizData[currentQuestionIndex];
+    if (selectedOption === currentQuestion.correctAnswer) {  
         score++;
     }
-  
+};
+
+function customMessage(selectedOption) {
+    const currentQuestion = quizData[currentQuestionIndex];
+    const message = document.createElement('p');
+    if (selectedOption === currentQuestion.correctAnswer) {
+        message.textContent = "🎉 Great Job!";
+        message.style.color = "green";
+    } else {
+        message.textContent = "❌ Wrong Answer!";
+        message.style.color = "red";
+    }
+    resultContainer.innerHTML = ''; // Clear previous message
+    resultContainer.appendChild(message);
+}
+
+
+const nextQuestion = () => {
+    clearInterval(countdown);
+    setTimeout(() => customMessage(selectedOption.value), 1000);
     currentQuestionIndex++;
-  
-    if (currentQuestionIndex < shuffledQuestions.length) {
+    if (currentQuestionIndex < quizData.length) {
         loadQuestion();
+        updateProgress();
     } else {
         showResult();
     }
-  }
-  
-  function questionNumberTracking() {
-    questionNumElement.textContent = `Question ${currentQuestionIndex + 1} of ${shuffledQuestions.length}`;
-  }
-  
-  function showResult() {
-    questionElement.classList.add('hidden');
-    optionsElement.classList.add('hidden');
-    nextButton.classList.add('hidden');
-    resultContainer.classList.remove('hidden');
-    scoreElement.textContent = score;
-  }
-  
-  function restartQuiz() {
+};
+
+const updateProgress = () => {
+    const progressPercentage = ((currentQuestionIndex + 1) / quizData.length) * 100;
+    progressBar.style.width = progressPercentage + "%";
+    progressBar.textContent = Math.floor(progressPercentage) + "%";
+};
+
+//Using the fisherYatesShuffle method
+const shuffleQuestionArray = () => {
+    for (let i = array.length - 1; i > 0;  i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));        
+    [array[i], array[randomIndex]] = [array[randomIndex], array[i]];        
+    }
+    return array;
+}
+
+const showResult = () => {
+    clearInterval(countdown);
+
+    resultContainer.innerHTML = `Your score: ${score} out of ${quizData.length}`;
+    questionContainer.innerHTML = "";
+    nextButton.style.display = "none";
+    restartButton.style.display = "block";
+};
+
+const resetTimer = () => {
+    timerElement.textContent = "01:00";
+};
+// remove r from "startTimer"
+const startTimer = () => {
+    let time = 60;
+    countdown = setInterval(() => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        if (time === 0) {
+            clearInterval(countdown);
+            nextQuestion(); // Move to the next question
+        }
+        time--;
+    }, 700);
+};
+ 
+nextButton.addEventListener("click", () => {
+    const selectedOption = document.querySelector('input[name="option"]:checked');
+    if (selectedOption) {
+        checkAnswer(selectedOption.value);
+        // questionContainer.style.opacity = 0;
+        customMessage(selectedOption.value);
+        setTimeout(() => nextQuestion(), 60000);
+        nextQuestion()
+    } else {
+        alert("Please select an option.");
+    }
+});
+
+restartButton.addEventListener("click", () => {
     currentQuestionIndex = 0;
     score = 0;
-    shuffledQuestions = shuffleArray([...questions]); // Shuffle questions once at the start
-    questionElement.classList.remove('hidden');
-    optionsElement.classList.remove('hidden');
-    nextButton.classList.remove('hidden');
-    resultContainer.classList.add('hidden');
+    nextButton.style.display = "block";
+    restartButton.style.display = "none";
+    resultContainer.innerHTML = "";
+    shuffleQuestionArray(quizData)
     loadQuestion();
-  }
+    updateProgress();
+});
 
-   function updateTimer() {
-     if (timeLeft > 0) {
-        timeLeft--; // Decrease time by 1sec
-        timerDisplay.textContent = TimeLeft; // Update the timer display
-    } else {
-        timerDisplay.classList.add('time-up');
-        timerDisplay.textContent = "Time's Up!";
-        clearInterval(timerInterval); // Stop the timer
-        // currentQuestionIndex++
-    }
-   }
-    // Start the timer automatically when the page loads
-    let timerInterval = setInterval(updateTimer, 1000);
-  
-  nextButton.addEventListener('click', loadQuestion);
-  restartButton.addEventListener('click', restartQuiz);
-  
-  // Start the quiz by shuffling questions once
-  restartQuiz();
-  
+// Initialize the first question and progress
+window.onload = () => {
+    shuffleQuestionArray(quizData)
+    loadQuestion();
+    updateProgress();
+};
+
+loadQuestion();
+//===IMPROVEMENTS===
+// 1. Timer for Each Question ⏱️✅- Add a countdown timer to create urgency.✅
+// 2. Progress Bar 📊✅ - Show progress with visual feedback (e.g., "3/5 questions completed").✅
+// 3. Custom Messages 📝 - Display feedback for correct/incorrect answers (e.g., "Great job!" or "Try again!").
+// 4. Review Incorrect Answers - Let users review questions they answered incorrectly.
+// 5. Random Question Order 🎲 - Shuffle questions each time the quiz starts.
+// 6.  Animated Transitions 🎨✅	Smooth animations for navigating between questions.✅
+// 7. custom Message - 
