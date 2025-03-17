@@ -1,58 +1,97 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
-  
-  .container {
-    background-color: #fff;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f8f8 ;
+    text-align: center;
+}
+
+#quiz-container {
+    max-width: 600px;
+    margin: 50px auto;
     padding: 20px;
+    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 20rem;
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
-  #question {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+#question-container {
+    text-align: left;
     margin-bottom: 20px;
-  }
-  .question-number-container{
-   margin-left: 1rem;
-  }
-  
-  #options button {
-    display: block;
-    background-color: #007bff;
+    transition: opacity 0.5s ease;
+}
+
+button {
+    background-color: #4caf50;
     color: #fff;
+    padding: 10px 20px;
     border: none;
-    padding: 10px;
-    margin: 5px 0;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  #options button:hover {
-    background-color: #0056b3;
-  }
-  
-  #next-button, #restart-button {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#result-container {
     margin-top: 20px;
-  }
-  
-  #next-button:hover, #restart-button:hover {
-    background-color: #218838;
-  }
-  
+    font-weight: bold;
+}
+
+/* progress bar  */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+  /*display: grid;
+    place-items: center;
+    background-color: #000;*/
+}
+.progress {
+    /* position: absolute; */
+    /* top: 50%;
+    left: 50%; */
+    transform: translate(-50%, -50%);
+    background: #ddd;
+    height: 15px;
+    width:200px;
+    margin-top: 1rem;
+    margin-left: 17.5rem;
+    border-radius: 20px; 
+}
+.progress-done {
+    font-family: sans-serif;
+    font-weight: bolder;
+    color: #fff;
+    height: 100%;
+    background: linear-gradient(to left,rgb(253, 2, 140),
+                rgb(240, 199, 230));
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    width: 0;
+    box-shadow: 0 0 3px -5px rgb(253, 2, 140), 0 3px 150px
+                rgb(255, 0, 140);
+    transition: width .5s ease;
+}
+
+.timer-container{
+      margin-left: 25rem;
+      background-color: grey;
+      padding: 0.7rem 0.4rem;
+      border-radius: 25%;
+      border: 1px solid black;
+}
+
+
+
+
+
+
+
+
