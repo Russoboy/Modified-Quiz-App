@@ -29,6 +29,7 @@ const progressBar = document.querySelector(".progress-done");
 const resultContainer = document.getElementById("result-container");
 const previewButton = document.getElementById('Preview-button');
 const backButton = document.getElementById('back-button')
+const skipButton = document.getElementById('skip-button')
 let currentQuestionIndex = 0;
 let score = 0;
 let countdown;
@@ -90,6 +91,20 @@ backButton.addEventListener('click', ()=>{
     if (currentQuestionIndex === 0) {
         backButton.style.display = "none"
     }
+})
+
+skipButton.addEventListener('click', ()=>{
+ const selectedOption = document.querySelector('input[name="option"]:checked');
+    if (!selectedOption || selectedOption) {
+    currentQuestionIndex++;
+    loadQuestion();
+    resetTimer();
+    updateProgress();
+    let score = { value: 0 };
+    Object.freeze(score);
+             
+    }
+
 })
 
 const nextQuestion = () => {
@@ -211,4 +226,4 @@ loadQuestion();
 // 5. Random Question Order 🎲 - Shuffle questions each time the quiz starts.
 // 6.  Animated Transitions 🎨✅	Smooth animations for navigating between questions.✅
 // 7. custom Message - custom message on each question answered
-// 8. BackButton - it is a cheatcode
+// 8. BackButton - it is a cheatcode though
