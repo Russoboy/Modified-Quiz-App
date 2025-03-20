@@ -17,7 +17,7 @@ const quizData = [
     {
         question: "Who is the Capital of Germany?",
         options: ["Berlin", "Munich", "Harmburg", "Frankfurt"],
-        correctAnswer: "Vladimir Putin"
+        correctAnswer: "Berlin"
     }
 ];
 
@@ -27,10 +27,12 @@ const nextButton = document.getElementById("next-button");
 const restartButton = document.getElementById("restart-button");
 const progressBar = document.querySelector(".progress-done");
 const resultContainer = document.getElementById("result-container");
-
+const previewButton = document.getElementById('Preview-button');
+const backButton = document.getElementById('back-button')
 let currentQuestionIndex = 0;
 let score = 0;
 let countdown;
+let incorrectAnswers = [];  // Array to store details of incorrect responses
 
 const loadQuestion = () => {
     const currentQuestion = quizData[currentQuestionIndex];
@@ -54,6 +56,12 @@ const checkAnswer = (selectedOption) => {
     const currentQuestion = quizData[currentQuestionIndex];
     if (selectedOption === currentQuestion.correctAnswer) {  
         score++;
+    } else {
+      incorrectAnswers.push({
+        question: currentQuestion.question,
+        userAnswer: selectedOption,
+        correctAnswer: currentQuestion.correctAnswer
+      });  
     }
 };
 
@@ -71,16 +79,29 @@ function customMessage(selectedOption) {
     resultContainer.appendChild(message);
 }
 
+backButton.addEventListener('click', ()=>{
+    const selectedOption = document.querySelector('input[name="option"]:checked');
+    if (currentQuestionIndex > 0 ) {
+        currentQuestionIndex--;
+        loadQuestion();
+        updateProgress(); 
+        backButton.style.display = "inline-block"        
+    } 
+    if (currentQuestionIndex === 0) {
+        backButton.style.display = "none"
+    }
+})
 
 const nextQuestion = () => {
     clearInterval(countdown);
-    setTimeout(() => customMessage(selectedOption.value), 1000);
+    // setTimeout(() => customMessage(selectedOption.value), 1000);
     currentQuestionIndex++;
     if (currentQuestionIndex < quizData.length) {
         loadQuestion();
         updateProgress();
     } else {
         showResult();
+        previewButton.style.display = "inline-block"//Added
     }
 };
 
@@ -101,11 +122,12 @@ const shuffleQuestionArray = () => {
 
 const showResult = () => {
     clearInterval(countdown);
-
+       
     resultContainer.innerHTML = `Your score: ${score} out of ${quizData.length}`;
     questionContainer.innerHTML = "";
     nextButton.style.display = "none";
     restartButton.style.display = "block";
+    previewButton.style.display = "inline-block"//Added
 };
 
 const resetTimer = () => {
@@ -123,7 +145,7 @@ const startTimer = () => {
             nextQuestion(); // Move to the next question
         }
         time--;
-    }, 700);
+    }, 1000);
 };
  
 nextButton.addEventListener("click", () => {
@@ -132,7 +154,7 @@ nextButton.addEventListener("click", () => {
         checkAnswer(selectedOption.value);
         // questionContainer.style.opacity = 0;
         customMessage(selectedOption.value);
-        setTimeout(() => nextQuestion(), 60000);
+        // setTimeout(() => nextQuestion(), 60000);
         nextQuestion()
     } else {
         alert("Please select an option.");
@@ -143,12 +165,35 @@ restartButton.addEventListener("click", () => {
     currentQuestionIndex = 0;
     score = 0;
     nextButton.style.display = "block";
-    restartButton.style.display = "none";
+    incorrectAnswers = [];
+
     resultContainer.innerHTML = "";
     shuffleQuestionArray(quizData)
     loadQuestion();
     updateProgress();
 });
+
+// When review button is clicked, display the incorrect answers
+previewButton.addEventListener("click", () => {
+    // Build review content
+    let reviewHTML = "<h2>Review Incorrect Answers</h2>";
+    if (incorrectAnswers.length === 0) {
+      reviewHTML += "<p>No incorrect answers. Great job!</p>";
+    } else {
+      incorrectAnswers.forEach((item, index) => {
+        reviewHTML += `
+          <div>
+            <p><strong>Q${index + 1}:</strong> ${item.question}</p>
+            <p>Your answer: ${item.userAnswer}</p>
+            <p>Correct answer: ${item.correctAnswer}</p>
+            <hr>
+          </div>
+        `;
+      });
+    }
+    // Replace the question container content with the review
+    questionContainer.innerHTML = reviewHTML;
+  });
 
 // Initialize the first question and progress
 window.onload = () => {
@@ -165,4 +210,5 @@ loadQuestion();
 // 4. Review Incorrect Answers - Let users review questions they answered incorrectly.
 // 5. Random Question Order 🎲 - Shuffle questions each time the quiz starts.
 // 6.  Animated Transitions 🎨✅	Smooth animations for navigating between questions.✅
-// 7. custom Message - 
+// 7. custom Message - custom message on each question answered
+// 8. BackButton - it is a cheatcode
