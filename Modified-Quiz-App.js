@@ -6,8 +6,8 @@ const quizData = [
     },
     {
         question: "What is the capital of Lagos State?",
-        options: ["Lagos", "Abuja", "Ibadan", "Kano"],
-        correctAnswer: "Lagos"
+        options: ["Ikeja", "Abuja", "Ibadan", "Kano"],
+        correctAnswer: "Ikeja"
     },
     {
         question: "Who is the President of Russia?",
@@ -70,9 +70,11 @@ function customMessage(selectedOption) {
     const currentQuestion = quizData[currentQuestionIndex];
     const message = document.createElement('p');
     if (selectedOption === currentQuestion.correctAnswer) {
+        document.getElementById("myAudio").play();
         message.textContent = "🎉 Great Job!";
         message.style.color = "green";
     } else {
+        document.getElementById("mySecondAudio").play();
         message.textContent = "❌ Wrong Answer!";
         message.style.color = "red";
     }
@@ -93,19 +95,17 @@ backButton.addEventListener('click', ()=>{
     }
 })
 
-skipButton.addEventListener('click', ()=>{
- const selectedOption = document.querySelector('input[name="option"]:checked');
-    if (!selectedOption || selectedOption) {
-    currentQuestionIndex++;
-    loadQuestion();
-    resetTimer();
-    updateProgress();
-    let score = { value: 0 };
-    Object.freeze(score);
-             
+skipButton.addEventListener("click", () => {
+    if (currentQuestionIndex < quizData.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+        resetTimer();
+        updateProgress();
+    } else {
+        showResult(); // If it's the last question, show results
     }
+});
 
-})
 
 const nextQuestion = () => {
     clearInterval(countdown);
@@ -146,10 +146,13 @@ const showResult = () => {
 };
 
 const resetTimer = () => {
+    clearInterval(countdown); // Stop the previous timer
     timerElement.textContent = "01:00";
 };
 // remove r from "startTimer"
+
 const startTimer = () => {
+    clearInterval(countdown); // Stop any previous interval before starting a new one
     let time = 60;
     countdown = setInterval(() => {
         const minutes = Math.floor(time / 60);
@@ -157,12 +160,12 @@ const startTimer = () => {
         timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         if (time === 0) {
             clearInterval(countdown);
-            nextQuestion(); // Move to the next question
+            nextQuestion(); // Move to the next question automatically
         }
         time--;
     }, 1000);
 };
- 
+
 nextButton.addEventListener("click", () => {
     const selectedOption = document.querySelector('input[name="option"]:checked');
     if (selectedOption) {
@@ -224,6 +227,8 @@ loadQuestion();
 // 3. Custom Messages 📝 - Display feedback for correct/incorrect answers (e.g., "Great job!" or "Try again!").
 // 4. Review Incorrect Answers - Let users review questions they answered incorrectly.
 // 5. Random Question Order 🎲 - Shuffle questions each time the quiz starts.
-// 6.  Animated Transitions 🎨✅	Smooth animations for navigating between questions.✅
+// 6. Animated Transitions 🎨✅	Smooth animations for navigating between questions.✅
 // 7. custom Message - custom message on each question answered
 // 8. BackButton - it is a cheatcode though
+// 9. SkipButton - SKip Questions
+// 10. Sound Effects - Added some sound effects
