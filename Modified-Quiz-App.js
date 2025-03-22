@@ -1,3 +1,5 @@
+import { loadQuestion, startTimer} from "./Basic-Func-Quiz-App.js";
+
 const quizData = [
     {
         question: "What is the current president of Nigeria?",
@@ -18,6 +20,61 @@ const quizData = [
         question: "Who is the Capital of Germany?",
         options: ["Berlin", "Munich", "Harmburg", "Frankfurt"],
         correctAnswer: "Berlin"
+    },
+    {
+        question: "What is the longest river in the world?",
+        options: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"],
+        correctAnswer: "Nile River"
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Venus"],
+        correctAnswer: "Mars"
+    },
+    {
+        question: "Who wrote 'Things Fall Apart'?",
+        options: ["Wole Soyinka", "Chinua Achebe", "Ngugi wa Thiong'o", "Toni Morrison"],
+        correctAnswer: "Chinua Achebe"
+    },
+    {
+        question: "What is the capital of Germany?",
+        options: ["Munich", "Berlin", "Frankfurt", "Hamburg"],
+        correctAnswer: "Berlin"
+    },
+    {
+        question: "Which country is known as the Land of the Rising Sun?",
+        options: ["China", "Japan", "South Korea", "Thailand"],
+        correctAnswer: "Japan"
+    },
+    {
+        question: "What gas do plants absorb from the atmosphere?",
+        options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+        correctAnswer: "Carbon Dioxide"
+    },
+    {
+        question: "Who painted the Mona Lisa?",
+        options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Claude Monet"],
+        correctAnswer: "Leonardo da Vinci"
+    },
+    {
+        question: "What is the currency of the United Kingdom?",
+        options: ["Euro", "Dollar", "Pound Sterling", "Franc"],
+        correctAnswer: "Pound Sterling"
+    },
+    {
+        question: "Which African country was never colonized?",
+        options: ["Ghana", "Ethiopia", "Nigeria", "South Africa"],
+        correctAnswer: "Ethiopia"
+    },
+    {
+        question: "What is the chemical symbol for Gold?",
+        options: ["Ag", "Au", "Pb", "Fe"],
+        correctAnswer: "Au"
+    },
+    {
+        question: "What is the American Independence year?",
+        options: ["1776", "1855", "1895", "1910"],
+        correctAnswer: "1776"
     }
 ];
 
@@ -30,28 +87,41 @@ const resultContainer = document.getElementById("result-container");
 const previewButton = document.getElementById('Preview-button');
 const backButton = document.getElementById('back-button')
 const skipButton = document.getElementById('skip-button')
+const dropdownLinks = document.querySelectorAll(".dropdown-content a");
+
+// Get the dropdown links
+
+
+
 let currentQuestionIndex = 0;
 let score = 0;
 let countdown;
 let incorrectAnswers = [];  // Array to store details of incorrect responses
+ // Default to all questions
 
-const loadQuestion = () => {
-    const currentQuestion = quizData[currentQuestionIndex];
-    questionContainer.innerHTML = `
-        <p>${currentQuestion.question}</p>
-        <ul>
-            ${currentQuestion.options.map((option, index) => `
-                <li>
-                    <input type="radio" name="option" value="${option}" id="option${index}">
-                    <label for="option${index}">${option}</label>
-                </li>
-            `).join('')}
-        </ul>
-    `;
-    resetTimer();
-    startTimer();
-    
-};
+
+
+loadQuestion(quizData, currentQuestionIndex, questionContainer, resetTimer, startTimer);
+// Event listener for dropdown
+dropdownLinks.forEach(link => {
+    link.addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent page refresh
+
+        // Extract the number from the text (e.g., "5 Questions" → 5)
+        numberOfQuestions = parseInt(event.target.textContent);
+
+        // Shuffle and slice quizData to the selected number
+        shuffleQuestionArray();
+        quizData = quizData.slice(0, numberOfQuestions);
+
+        // Reset and load first question
+        currentQuestionIndex = 0;
+        score = 0;
+        incorrectAnswers = [];
+        loadQuestion();
+        updateProgress();
+    });
+});
 
 const checkAnswer = (selectedOption) => {
     const currentQuestion = quizData[currentQuestionIndex];
@@ -127,13 +197,13 @@ const updateProgress = () => {
 };
 
 //Using the fisherYatesShuffle method
-const shuffleQuestionArray = () => {
-    for (let i = array.length - 1; i > 0;  i--) {
-    const randomIndex = Math.floor(Math.random() * (i + 1));        
-    [array[i], array[randomIndex]] = [array[randomIndex], array[i]];        
-    }
-    return array;
-}
+const shuffleQuestionArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [array[i], array[randomIndex]] = [array[randomIndex], array[i]];
+  }
+  return array;
+};
 
 const showResult = () => {
     clearInterval(countdown);
@@ -150,21 +220,6 @@ const resetTimer = () => {
     timerElement.textContent = "01:00";
 };
 // remove r from "startTimer"
-
-const startTimer = () => {
-    clearInterval(countdown); // Stop any previous interval before starting a new one
-    let time = 60;
-    countdown = setInterval(() => {
-        const minutes = Math.floor(time / 60);
-        const seconds = time % 60;
-        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        if (time === 0) {
-            clearInterval(countdown);
-            nextQuestion(); // Move to the next question automatically
-        }
-        time--;
-    }, 1000);
-};
 
 nextButton.addEventListener("click", () => {
     const selectedOption = document.querySelector('input[name="option"]:checked');
