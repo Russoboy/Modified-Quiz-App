@@ -21,6 +21,7 @@ h1 {
     text-align: left;
     margin-bottom: 20px;
     transition: opacity 0.5s ease;
+    
 }
 
 button {
@@ -78,6 +79,7 @@ body {
     box-shadow: 0 0 3px -5px rgb(253, 2, 140), 0 3px 150px
                 rgb(255, 0, 140);
     transition: width .5s ease;
+  ;
 }
 
 .timer-container{
@@ -87,11 +89,5 @@ body {
       border-radius: 25%;
       border: 1px solid black;
 }
-
-
-
-
-
-
 
 
